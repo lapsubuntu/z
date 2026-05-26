@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ticket Champions</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #0d1117; min-height: 100vh;
+           display: flex; flex-direction: column; align-items: center;
+           justify-content: center; padding: 2rem; color: #f0f6fc; }
+    .title { font-size: 32px; font-weight: 700; margin-bottom: .25rem; text-align: center; }
+    .subtitle { color: #8b949e; margin-bottom: 3.5rem; text-align: center; font-size: 15px; }
+    .podium-wrap { display: flex; align-items: flex-end; gap: 20px; }
+    .place { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .avatar { width: 64px; height: 64px; border-radius: 50%; display: flex;
+              align-items: center; justify-content: center; font-size: 20px;
+              font-weight: 700; background-size: cover; background-position: center;
+              border: 3px solid transparent; }
+    .name { font-size: 13px; font-weight: 600; text-align: center; max-width: 110px; line-height: 1.3; }
+    .tier { font-size: 11px; text-align: center; margin-top: -4px; }
+    .count { font-size: 12px; color: #8b949e; margin-top: 2px; }
+    .block { border-radius: 10px 10px 0 0; width: 110px; display: flex;
+             align-items: center; justify-content: center; font-size: 28px; font-weight: 800; }
+    .p1 .avatar { border-color: #FFD700; background-color: #3a2f0a; }
+    .p1 .block  { height: 140px; background: #8a6500; color: #FFD700; }
+    .p2 .avatar { border-color: #C0C0C0; background-color: #2a2a2a; }
+    .p2 .block  { height: 95px; background: #555; color: #C0C0C0; }
+    .p3 .avatar { border-color: #CD7F32; background-color: #2e1f0a; }
+    .p3 .block  { height: 65px; background: #7a3f1a; color: #CD7F32; }
+    .badge-gold   { color: #FFD700; }
+    .badge-silver { color: #C0C0C0; }
+    .badge-bronze { color: #CD7F32; }
+    .footer { font-size: 12px; color: #444d56; margin-top: 2rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="title">🏆 Ticket Champions</div>
+  <div class="subtitle" id="subtitle"></div>
+  <div class="podium-wrap" id="podium"></div>
+  <div class="footer" id="footer"></div>
+
+  <script>
+    const p = new URLSearchParams(window.location.search);
+
+    const today = new Date();
+    document.getElementById('subtitle').textContent =
+      'Chamados finalizados · ' + today.toLocaleDateString('pt-BR');
+    document.getElementById('footer').textContent =
+      'Sistema de Chamados · ' + today.toLocaleString('pt-BR');
+
+    function buildPlace(cls, badge, n, q, r, f) {
+      const initials = n ? n.trim().split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() : '??';
+      const avatarBg = f ? `background-image:url('${decodeURIComponent(f)}')` : '';
+      const avatarContent = f ? '' : initials;
+      const rank = cls === 'p1' ? '1' : cls === 'p2' ? '2' : '3';
+      return `
+        <div class="place ${cls}">
+          <div class="avatar" style="${avatarBg}">${avatarContent}</div>
+          <div class="name">${n || '-'}</div>
+          <div class="tier ${badge}">⬡ ${r || '-'}</div>
+          <div class="count">${q || '0'} tickets</div>
+          <div class="block">${rank}</div>
+        </div>`;
+    }
+
+    document.getElementById('podium').innerHTML =
+      buildPlace('p2', 'badge-silver', p.get('p2n'), p.get('p2q'), p.get('p2r'), p.get('p2f')) +
+      buildPlace('p1', 'badge-gold',   p.get('p1n'), p.get('p1q'), p.get('p1r'), p.get('p1f')) +
+      buildPlace('p3', 'badge-bronze', p.get('p3n'), p.get('p3q'), p.get('p3r'), p.get('p3f'));
+  </script>
+</body>
+</html>
